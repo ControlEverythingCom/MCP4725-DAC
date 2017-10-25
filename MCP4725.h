@@ -4,7 +4,7 @@
 class MCP4725{
 public:
 
-bool begin();
+bool begin(bool addrJumper);
 
 bool setOutputVoltage(float voltage, bool eeprom);
 
