@@ -12,13 +12,10 @@ bool MCP4725::begin(){
 }
 
 bool MCP4725::setOutputVoltage(float voltage, bool eeprom){
-    float voltsPerStep = inputVoltage/4096;
+    float voltsPerStep = inputVoltage/4095;
     
     int setPoint = voltage/voltsPerStep;
-    
-    int msb = setPoint/256;
-    
-    int lsb = setPoint - (msb*256);
+    Serial.printf("Set Point: %i\n", setPoint);
     
     Wire.beginTransmission(address);
     if(eeprom){
@@ -26,8 +23,8 @@ bool MCP4725::setOutputVoltage(float voltage, bool eeprom){
     }else{
         Wire.write(writeDacReg);
     }
-    Wire.write(msb);
-    Wire.write(lsb);
+    Wire.write(setPoint >> 4);
+    Wire.write((setPoint & 15)<<4);
     byte status = Wire.endTransmission();
     if(status == 0){
         return true;
@@ -38,14 +35,10 @@ bool MCP4725::setOutputVoltage(float voltage, bool eeprom){
 
 bool MCP4725::setOutputRaw(int point, bool eeprom){
     
-    int msb = point/256;
-    int lsb = point - (msb*256);
-    Serial.printf("Setting output to MSB: %i, LSB: %i \n", msb, lsb);
-    
     Wire.beginTransmission(address);
     Wire.write(writeDacReg);
-    Wire.write(msb);
-    Wire.write(lsb);
+    Wire.write(point >> 4);
+    Wire.write((point&15)<<4);
     byte status = Wire.endTransmission();
     if(status == 0){
         return true;
