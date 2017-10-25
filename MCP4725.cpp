@@ -1,6 +1,9 @@
 #include "MCP4725.h"
 
-bool MCP4725::begin(){
+bool MCP4725::begin(bool addrJumper){
+    if(addrJumper){
+        address++;
+    }
     Wire.begin();
     Wire.beginTransmission(address);
     byte status = Wire.endTransmission();
